@@ -53,6 +53,7 @@ public class AmbientProbe {
     public void Capture() {
         RenderTexture.active = this.renderTexture;
         this.camera.targetTexture = this.renderTexture;
+        this.camera.farClipPlane = this.Size + 0.01f;
 
         var transform = this.camera.transform;
 
@@ -75,7 +76,7 @@ public class AmbientProbe {
 
         for (int i = 0; i < this.colors.Length; i++) {
             Gizmos.color = this.colors[i];
-            Gizmos.DrawSphere(this.Position + Directions[i] * this.Size * 0.5f, this.Size * 0.1f);
+            Gizmos.DrawSphere(this.Position + Directions[i] * this.Size * 0.3f, this.Size * 0.1f);
         }
     }
 

@@ -28,8 +28,8 @@ public class ProbeMgr : MonoBehaviour {
         }
     }
 
-    private void FlushProbes() {
-        bool tick = this.size != this._size || this.interval != this._interval || this.transform.position != this._position;
+    private void FlushProbes(bool force=false) {
+        bool tick = force || this.size != this._size || this.interval != this._interval || this.transform.position != this._position;
 
         if (!tick) {
             return;
@@ -40,7 +40,9 @@ public class ProbeMgr : MonoBehaviour {
         this._position = this.transform.position;
 
         this.probes = new List<AmbientProbe>();
-        this.camera = this.GetComponentInChildren<Camera>();
+
+        var go = this.transform.Find("Camera");
+        this.camera = go.GetComponent<Camera>();
         
         var pos = this.transform.position;
         int n = 0;
@@ -62,7 +64,7 @@ public class ProbeMgr : MonoBehaviour {
     }
 
     public void Bake() {
-        print(this.camera);
+        this.FlushProbes(true);
         this.camera.gameObject.SetActive(true);
 
         foreach (var probe in this.probes) {
