@@ -10,6 +10,7 @@ public class ProbeMgr : MonoBehaviour {
     private Vector3Int _size;
     private float _interval;
     private Vector3 _position;
+    private new Camera camera;
 
     protected void OnRenderObject() {
         this.FlushProbes();
@@ -39,8 +40,8 @@ public class ProbeMgr : MonoBehaviour {
         this._position = this.transform.position;
 
         this.probes = new List<AmbientProbe>();
-
-        var camera = this.GetComponentInChildren<Camera>();
+        this.camera = this.GetComponentInChildren<Camera>();
+        
         var pos = this.transform.position;
         int n = 0;
         
@@ -53,12 +54,21 @@ public class ProbeMgr : MonoBehaviour {
                     p.z += this.interval * k;
                     n++;
 
-                    var probe = new AmbientProbe(p, this.interval, n, camera);
+                    var probe = new AmbientProbe(p, this.interval, n, this.camera);
                     this.probes.Add(probe);
                 }
             }
         }
+    }
 
-        this.probes[0].Capture();
+    public void Bake() {
+        print(this.camera);
+        this.camera.gameObject.SetActive(true);
+
+        foreach (var probe in this.probes) {
+            probe.Capture();
+        }
+
+        this.camera.gameObject.SetActive(false);
     }
 }
