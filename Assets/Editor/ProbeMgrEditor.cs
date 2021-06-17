@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 
 [CustomEditor(typeof(ProbeMgr))]
 public class ProbeMgrEditor : Editor {
@@ -9,6 +10,8 @@ public class ProbeMgrEditor : Editor {
         if (GUILayout.Button("Bake")) {
             var mgr = this.target as ProbeMgr;
             mgr.Bake();
+
+            EditorSceneManager.SaveOpenScenes();
         }
     }
 }
