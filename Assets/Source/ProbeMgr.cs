@@ -83,6 +83,14 @@ public class ProbeMgr : MonoBehaviour {
         return position;
     }
 
+    private Vector3 GetPositionIndex(Vector3 position) {
+        position -= this.transform.position;
+        position /= this.interval;
+        position += this.size;
+
+        return position;
+    }
+
     private void FlushProbe() {
         int max = (this.size.x * 2 + 1) * (this.size.y * 2 + 1) * (this.size.z * 2 + 1);
         this.datas = new ProbeData[max];
