@@ -6,6 +6,8 @@ Shader "Universal Render Pipeline/Unlit"
         [MainColor]   _BaseColor("Color", Color) = (1, 1, 1, 1)
         _Cutoff("AlphaCutout", Range(0.0, 1.0)) = 0.5
 
+        [Toggle]_VOLUME_GI("Volume GI", Float) = 0
+
         // BlendMode
         [HideInInspector] _Surface("__surface", Float) = 0.0
         [HideInInspector] _Blend("__blend", Float) = 0.0
@@ -44,6 +46,7 @@ Shader "Universal Render Pipeline/Unlit"
             #pragma fragment frag
             #pragma shader_feature_local_fragment _ALPHATEST_ON
             #pragma shader_feature_local_fragment _ALPHAPREMULTIPLY_ON
+            #pragma shader_feature _VOLUME_GI_ON
 
             // -------------------------------------
             // Unity defined keywords
@@ -52,6 +55,7 @@ Shader "Universal Render Pipeline/Unlit"
             #pragma multi_compile _ DOTS_INSTANCING_ON
 
             #include "UnlitInput.hlsl"
+            #include "Assets/Shader/IrradianceVolume.hlsl"
 
             struct Attributes
             {
@@ -64,6 +68,7 @@ Shader "Universal Render Pipeline/Unlit"
             {
                 float2 uv        : TEXCOORD0;
                 float fogCoord  : TEXCOORD1;
+                float3 volumeIndex : TEXCOORD2;
                 float4 vertex : SV_POSITION;
 
                 UNITY_VERTEX_INPUT_INSTANCE_ID
@@ -83,6 +88,10 @@ Shader "Universal Render Pipeline/Unlit"
                 output.uv = TRANSFORM_TEX(input.uv, _BaseMap);
                 output.fogCoord = ComputeFogFactor(vertexInput.positionCS.z);
 
+                #ifdef _VOLUME_GI_ON
+                    output.volumeIndex = PositionToIndex(vertexInput.positionWS);
+                #endif
+
                 return output;
             }
 
@@ -93,7 +102,14 @@ Shader "Universal Render Pipeline/Unlit"
 
                 half2 uv = input.uv;
                 half4 texColor = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, uv);
-                half3 color = texColor.rgb * _BaseColor.rgb;
+            
+            #ifdef _VOLUME_GI_ON
+                half3 ambientColor = GetAmbientColor(input.volumeIndex);
+            #else
+                half3 ambientColor = 1.0;
+            #endif
+
+                half3 color = texColor.rgb * _BaseColor.rgb * ambientColor;
                 half alpha = texColor.a * _BaseColor.a;
                 AlphaDiscard(alpha, _Cutoff);
 
@@ -291,5 +307,5 @@ Shader "Universal Render Pipeline/Unlit"
         }
     }
     FallBack "Hidden/Universal Render Pipeline/FallbackError"
-    CustomEditor "UnityEditor.Rendering.Universal.ShaderGUI.UnlitShader"
+    // CustomEditor "UnityEditor.Rendering.Universal.ShaderGUI.UnlitShader"
 }

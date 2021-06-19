@@ -35,6 +35,13 @@ public class ProbeMgr : MonoBehaviour {
     public ProbeData[] datas;
     public Texture3D texture;
 
+    protected void Start() {
+        Shader.SetGlobalTexture("_IndexVolumeTex", this.texture);
+        Shader.SetGlobalVector("_VolumeSize", (Vector3)this.size);
+        Shader.SetGlobalVector("_VolumePosition", this.transform.position);
+        Shader.SetGlobalFloat("_VolumeInterval", this.interval);
+    }
+
     protected void OnDrawGizmosSelected() {
         if (this.datas == null) {
             return;
@@ -73,6 +80,17 @@ public class ProbeMgr : MonoBehaviour {
         
         RenderTexture.active = null;
         camera.gameObject.SetActive(false);
+
+        this.texture = new Texture3D(this.size.x * 2 + 1, this.size.z * 2 + 1, this.size.y * 2 + 1, DefaultFormat.HDR, 0);
+        
+        foreach (var data in this.datas) {
+            var pos = data.position;
+            var color = data.colors[3];
+            this.texture.SetPixel(pos.x, pos.z, pos.y, color);
+        }
+
+        this.texture.filterMode = FilterMode.Point;
+        this.texture.Apply();
     }
 
     private Vector3 GetProbePosition(ProbeData data) {
@@ -110,17 +128,6 @@ public class ProbeMgr : MonoBehaviour {
                 }
             }
         }
-        
-        this.texture = new Texture3D(this.size.x * 2 + 1, this.size.z * 2 + 1, this.size.y * 2 + 1, GraphicsFormat.R16_SFloat, 0);
-        
-        foreach (var data in this.datas) {
-            var pos = data.position;
-            var color = new Color(data.index / 255.0f, 0, 0);
-            this.texture.SetPixel(pos.x, pos.z, pos.y, color);
-        }
-
-        this.texture.filterMode = FilterMode.Point;
-        this.texture.Apply();
     }
 
     private void CaptureProbe(ProbeData data, Camera camera, Texture2D texture) {
