@@ -1,10 +1,11 @@
 using System;
 using UnityEngine;
+using UnityEngine.Experimental.Rendering;
 
 [Serializable]
 public class ProbeData {
     public int index;
-    public Vector3 position;
+    public Vector3Int position;
     public Color[] colors;
 }
 
@@ -32,6 +33,7 @@ public class ProbeMgr : MonoBehaviour {
     public Vector3Int size;
     public float interval;
     public ProbeData[] datas;
+    public Texture3D texture;
 
     protected void OnDrawGizmosSelected() {
         if (this.datas == null) {
@@ -102,12 +104,23 @@ public class ProbeMgr : MonoBehaviour {
                     n++;
                     this.datas[n] = new ProbeData() {
                         index = n,
-                        position = new Vector3(i, j, k),
+                        position = new Vector3Int(i, j, k),
                         colors = new Color[6]
                     };
                 }
             }
         }
+        
+        this.texture = new Texture3D(this.size.x * 2 + 1, this.size.z * 2 + 1, this.size.y * 2 + 1, GraphicsFormat.R16_SFloat, 0);
+        
+        foreach (var data in this.datas) {
+            var pos = data.position;
+            var color = new Color(data.index / 255.0f, 0, 0);
+            this.texture.SetPixel(pos.x, pos.z, pos.y, color);
+        }
+
+        this.texture.filterMode = FilterMode.Point;
+        this.texture.Apply();
     }
 
     private void CaptureProbe(ProbeData data, Camera camera, Texture2D texture) {
