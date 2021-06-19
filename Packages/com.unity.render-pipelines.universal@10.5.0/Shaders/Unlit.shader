@@ -68,7 +68,7 @@ Shader "Universal Render Pipeline/Unlit"
             {
                 float2 uv        : TEXCOORD0;
                 float fogCoord  : TEXCOORD1;
-                float3 volumeIndex : TEXCOORD2;
+                float3 positionWS : TEXCOORD2;
                 float4 vertex : SV_POSITION;
 
                 UNITY_VERTEX_INPUT_INSTANCE_ID
@@ -85,12 +85,9 @@ Shader "Universal Render Pipeline/Unlit"
 
                 VertexPositionInputs vertexInput = GetVertexPositionInputs(input.positionOS.xyz);
                 output.vertex = vertexInput.positionCS;
+                output.positionWS = vertexInput.positionWS;
                 output.uv = TRANSFORM_TEX(input.uv, _BaseMap);
                 output.fogCoord = ComputeFogFactor(vertexInput.positionCS.z);
-
-                #ifdef _VOLUME_GI_ON
-                    output.volumeIndex = PositionToIndex(vertexInput.positionWS);
-                #endif
 
                 return output;
             }
@@ -104,7 +101,7 @@ Shader "Universal Render Pipeline/Unlit"
                 half4 texColor = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, uv);
             
             #ifdef _VOLUME_GI_ON
-                half3 ambientColor = GetAmbientColor(input.volumeIndex);
+                half3 ambientColor = GetAmbientColor(input.positionWS);
             #else
                 half3 ambientColor = 1.0;
             #endif

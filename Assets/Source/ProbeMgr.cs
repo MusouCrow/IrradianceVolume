@@ -36,10 +36,7 @@ public class ProbeMgr : MonoBehaviour {
     public Texture3D texture;
 
     protected void Start() {
-        Shader.SetGlobalTexture("_IndexVolumeTex", this.texture);
-        Shader.SetGlobalVector("_VolumeSize", (Vector3)this.size);
-        Shader.SetGlobalVector("_VolumePosition", this.transform.position);
-        Shader.SetGlobalFloat("_VolumeInterval", this.interval);
+        this.SetValue();
     }
 
     protected void OnDrawGizmosSelected() {
@@ -91,6 +88,8 @@ public class ProbeMgr : MonoBehaviour {
 
         this.texture.filterMode = FilterMode.Point;
         this.texture.Apply();
+
+        this.SetValue();
     }
 
     private Vector3 GetProbePosition(ProbeData data) {
@@ -156,5 +155,12 @@ public class ProbeMgr : MonoBehaviour {
         }
 
         return color / max;
+    }
+
+    private void SetValue() {
+        Shader.SetGlobalTexture("_IndexVolumeTex", this.texture);
+        Shader.SetGlobalVector("_VolumeSize", (Vector3)this.size);
+        Shader.SetGlobalVector("_VolumePosition", this.transform.position);
+        Shader.SetGlobalFloat("_VolumeInterval", this.interval);
     }
 }
