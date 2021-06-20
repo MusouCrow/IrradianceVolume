@@ -9,6 +9,7 @@ public class ProbeData {
     public Color[] colors;
 }
 
+[ExecuteAlways]
 public class ProbeMgr : MonoBehaviour {
     private const int SIZE = 4;
 
@@ -34,6 +35,8 @@ public class ProbeMgr : MonoBehaviour {
     public float interval;
     public ProbeData[] datas;
     public Texture3D texture;
+    
+    private ComputeBuffer buffer;
 
     protected void Start() {
         this.SetValue();
@@ -78,11 +81,11 @@ public class ProbeMgr : MonoBehaviour {
         RenderTexture.active = null;
         camera.gameObject.SetActive(false);
 
-        this.texture = new Texture3D(this.size.x * 2 + 1, this.size.z * 2 + 1, this.size.y * 2 + 1, DefaultFormat.HDR, 0);
+        this.texture = new Texture3D(this.size.x * 2 + 1, this.size.z * 2 + 1, this.size.y * 2 + 1, GraphicsFormat.R16_SFloat, 0);
         
         foreach (var data in this.datas) {
             var pos = data.position;
-            var color = data.colors[3];
+            var color = new Color(data.index / 255.0f, 0, 0);
             this.texture.SetPixel(pos.x, pos.z, pos.y, color);
         }
 
@@ -162,5 +165,24 @@ public class ProbeMgr : MonoBehaviour {
         Shader.SetGlobalVector("_VolumeSize", (Vector3)this.size);
         Shader.SetGlobalVector("_VolumePosition", this.transform.position);
         Shader.SetGlobalFloat("_VolumeInterval", this.interval);
+
+        if (this.buffer != null) {
+            this.buffer.Release();
+        }
+
+        this.buffer = new ComputeBuffer(this.datas.Length, sizeof(float) * 3 * 6);
+        var datas = new Vector3[this.datas.Length * 6];
+        int n = -1;
+
+        foreach (var data in this.datas) {
+            for (int i = 0; i < 6; i++) {
+                n++;
+                var c = data.colors[i];
+                datas[n] = new Vector3(c.r, c.g, c.b);
+            }
+        }
+
+        this.buffer.SetData(datas);
+        Shader.SetGlobalBuffer("_VolumeColors", this.buffer);
     }
 }
