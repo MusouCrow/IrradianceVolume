@@ -39,15 +39,24 @@ float3 GetVolumePosition(float3 index) {
     return position;
 }
 
-float3 GetAmbientColor(float3 position) {
-    float3 index = PositionToVolumeIndex(position);
-    float3 center = GetVolumePosition(index);
-    float3 range = abs(position - center);
+float3 GetAmbientColor(float3 position, float3 direction, float3 center, VolumeColor volumeColor) {
+    float3 positiveX = saturate(dot(direction, float3(1, 0, 0))) * volumeColor.positiveX;
+    float3 negativeX = saturate(dot(direction, float3(-1, 0, 0))) * volumeColor.negativeX;
+    float3 positiveY = saturate(dot(direction, float3(0, 1, 0))) * volumeColor.positiveY;
+    float3 negativeY = saturate(dot(direction, float3(0, -1, 0))) * volumeColor.negativeY;
+    float3 positiveZ = saturate(dot(direction, float3(0, 0, 1))) * volumeColor.positiveZ;
+    float3 negativeZ = saturate(dot(direction, float3(0, 0, -1))) * volumeColor.negativeZ;
 
-    // float index = SAMPLE_TEXTURE3D(_IndexVolumeTex, sampler_IndexVolumeTex, position).r;
-    // return _VolumeColors[ceil(index * 255)].negativeY;
+    return positiveX + negativeX + positiveY + negativeY + positiveZ + negativeZ;
+}
 
-    return range / (_VolumeInterval * 0.5);
+float3 GetIrradiance(float3 position, float3 normal) {
+    float3 indexPos = PositionToVolumeIndex(position);
+    float3 center = GetVolumePosition(indexPos);
+    float index = SAMPLE_TEXTURE3D(_IndexVolumeTex, sampler_IndexVolumeTex, indexPos).r;
+    float3 color = GetAmbientColor(position, normal, center, _VolumeColors[ceil(index * 255)]);
+
+    return color;
 }
 
 #endif
