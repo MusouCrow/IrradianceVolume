@@ -2,6 +2,7 @@
 #define UNIVERSAL_SIMPLE_LIT_PASS_INCLUDED
 
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+#include "Assets/Shader/IrradianceVolume.hlsl"
 
 struct Attributes
 {
@@ -143,6 +144,14 @@ half4 LitPassFragmentSimple(Varyings input) : SV_Target
     InitializeInputData(input, normalTS, inputData);
 
     half4 color = UniversalFragmentBlinnPhong(inputData, diffuse, specular, smoothness, emission, alpha);
+
+#ifdef _VOLUME_GI_ON
+    half3 ambientColor = GetIrradiance(inputData.positionWS, inputData.normalWS);
+#else
+    half3 ambientColor = 1.0;
+#endif
+    
+    color.rgb *= ambientColor;
     color.rgb = MixFog(color.rgb, inputData.fogCoord);
     color.a = OutputAlpha(color.a, _Surface);
 

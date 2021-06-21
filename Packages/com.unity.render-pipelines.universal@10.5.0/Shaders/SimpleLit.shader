@@ -30,6 +30,7 @@ Shader "Universal Render Pipeline/Simple Lit"
         [HideInInspector] _Cull("__cull", Float) = 2.0
 
         [ToggleOff] _ReceiveShadows("Receive Shadows", Float) = 1.0
+        [Toggle]_VOLUME_GI("Volume GI", Float) = 0
 
         // Editmode props
         [HideInInspector] _QueueOffset("Queue offset", Float) = 0.0
@@ -75,6 +76,7 @@ Shader "Universal Render Pipeline/Simple Lit"
             #pragma shader_feature_local _NORMALMAP
             #pragma shader_feature_local_fragment _EMISSION
             #pragma shader_feature_local _RECEIVE_SHADOWS_OFF
+            #pragma shader_feature _VOLUME_GI_ON
 
             // -------------------------------------
             // Universal Pipeline keywords
@@ -481,5 +483,5 @@ Shader "Universal Render Pipeline/Simple Lit"
         }
     }
     Fallback "Hidden/Universal Render Pipeline/FallbackError"
-    CustomEditor "UnityEditor.Rendering.Universal.ShaderGUI.SimpleLitShader"
+    // CustomEditor "UnityEditor.Rendering.Universal.ShaderGUI.SimpleLitShader"
 }
