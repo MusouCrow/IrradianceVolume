@@ -2,6 +2,7 @@
 #define __IrradianceVolume__
 
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 
 struct VolumeColor {
     float3 positiveX;
@@ -51,10 +52,12 @@ float3 GetAmbientColor(float3 position, float3 direction, float3 center, VolumeC
 }
 
 float3 GetIrradiance(float3 position, float3 normal) {
+    // float3 direction = reflect(normalize(_MainLightPosition.xyz), normalize(normal));
+    float3 direction = -_MainLightPosition.xyz * normal;
     float3 indexPos = PositionToVolumeIndex(position);
     float3 center = GetVolumePosition(indexPos);
     float index = SAMPLE_TEXTURE3D(_IndexVolumeTex, sampler_IndexVolumeTex, indexPos).r;
-    float3 color = GetAmbientColor(position, normal, center, _VolumeColors[ceil(index * 255)]);
+    float3 color = GetAmbientColor(position, direction, center, _VolumeColors[ceil(index * 255)]);
 
     return color;
 }
