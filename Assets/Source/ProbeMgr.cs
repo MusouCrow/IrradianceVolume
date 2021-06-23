@@ -37,8 +37,10 @@ public class ProbeMgr : MonoBehaviour {
     public Texture3D texture;
     
     private ComputeBuffer buffer;
+    private Vector3 position;
 
     protected void Start() {
+        this.AdjustPosition();
         this.SetValue();
     }
 
@@ -100,21 +102,20 @@ public class ProbeMgr : MonoBehaviour {
     }
 
     private Vector3 GetProbePosition(ProbeData data) {
-        var position = this.transform.position;
+        var position = this.position;
 
         for (int i = 0; i < 3; i++) {
-            position[i] += this.interval * (data.position[i] - this.size[i]);
+            position[i] += (this.interval * data.position[i]) + (this.interval * 0.5f);
         }
 
         return position;
     }
 
-    private Vector3 GetPositionIndex(Vector3 position) {
-        position -= this.transform.position;
+    public Vector3Int GetPositionIndex(Vector3 position) {
+        position -= this.position;
         position /= this.interval;
-        position += this.size;
-
-        return position;
+        
+        return new Vector3Int((int)position.x, (int)position.y, (int)position.z);
     }
 
     private void FlushProbe() {
@@ -134,6 +135,8 @@ public class ProbeMgr : MonoBehaviour {
                 }
             }
         }
+
+        this.AdjustPosition();
     }
 
     private void CaptureProbe(ProbeData data, Camera camera, Texture2D texture) {
@@ -171,7 +174,7 @@ public class ProbeMgr : MonoBehaviour {
 
         Shader.SetGlobalTexture("_IndexVolumeTex", this.texture);
         Shader.SetGlobalVector("_VolumeSize", (Vector3)this.size);
-        Shader.SetGlobalVector("_VolumePosition", this.transform.position);
+        Shader.SetGlobalVector("_VolumePosition", this.position);
         Shader.SetGlobalFloat("_VolumeInterval", this.interval);
 
         if (this.buffer != null) {
@@ -192,5 +195,10 @@ public class ProbeMgr : MonoBehaviour {
 
         this.buffer.SetData(datas);
         Shader.SetGlobalBuffer("_VolumeColors", this.buffer);
+    }
+
+    private void AdjustPosition() {
+        var interval = new Vector3(this.interval, this.interval, this.interval) * 0.5f;
+        this.position = this.transform.position - ((Vector3)this.size * this.interval) - interval;
     }
 }

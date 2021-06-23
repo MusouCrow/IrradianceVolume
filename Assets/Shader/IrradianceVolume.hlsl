@@ -26,8 +26,7 @@ CBUFFER_END
 float3 PositionToVolumeIndex(float3 position) {
     position -= _VolumePosition;
     position /= _VolumeInterval;
-    position += _VolumeSize + 0.5;
-    position /= _VolumeSize * 2 + 1;
+    position = floor(position);
 
     return float3(position.x, position.z, position.y);
 }
@@ -35,7 +34,7 @@ float3 PositionToVolumeIndex(float3 position) {
 float3 GetVolumePosition(float3 index) {
     float3 position = _VolumePosition;
     index = float3(index.x, index.z, index.y);
-    position += _VolumeInterval * (floor(index) - _VolumeSize);
+    position += (_VolumeInterval * floor(index)) + (_VolumeInterval * 0.5);
 
     return position;
 }
@@ -64,7 +63,8 @@ float3 GetIrradiance(float3 position, float3 normal) {
     float3 direction = -_MainLightPosition.xyz * normal;
     float3 indexPos = PositionToVolumeIndex(position);
     float3 center = GetVolumePosition(indexPos);
-    float index = SAMPLE_TEXTURE3D(_IndexVolumeTex, sampler_IndexVolumeTex, indexPos).r;
+    float3 size = _VolumeSize * 2 + 1;
+    float index = SAMPLE_TEXTURE3D(_IndexVolumeTex, sampler_IndexVolumeTex, indexPos / size).r;
     float3 color = GetAmbientColor(position, center, direction, _VolumeColors[ceil(index * 255)]);
 
     return color;
