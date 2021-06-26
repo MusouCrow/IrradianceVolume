@@ -219,44 +219,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!117 &338748947
-Texture3D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_ForcedFallbackFormat: 4
-  m_DownscaleFallback: 0
-  m_IsAlphaChannelOptional: 0
-  serializedVersion: 3
-  m_ColorSpace: 0
-  m_Format: 48
-  m_Width: 5
-  m_Height: 5
-  m_Depth: 1
-  m_MipCount: 1
-  m_DataSize: 200
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 0
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 0
-    m_WrapV: 0
-    m_WrapW: 0
-  m_UsageMode: 0
-  m_IsReadable: 1
-  image data: 200
-  _typelessdata: 7b3b7c3aaa33003cfd3b15363230003c0d3b992c4c30003cd23545215736003cbc2fc12cbb38003c7b3be63af433003c003c5b379d30003c833b012d4f2f003c173706228935003cf82f602cb038003c7b3b323b1434003c003ca0381931003cda3b6f2fbf2e003ca33886255f34003c33317c2c7f38003c7b3b553b1c34003c003ca139ae31003cfc3ba831f72e003ca339e827c932003c27339d2c1e38003c7b3b433b1034003cff3b223a2832003ce83bcc331e30003c223a8528d231003ca5348d2c4f37003c
-  m_StreamData:
-    serializedVersion: 2
-    offset: 0
-    size: 0
-    path: 
 --- !u!1 &602427255
 GameObject:
   m_ObjectHideFlags: 0
@@ -283,7 +245,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 602427255}
   m_LocalRotation: {x: -0, y: 1, z: -0, w: -0.00000004371139}
-  m_LocalPosition: {x: 4, y: 0, z: 5}
+  m_LocalPosition: {x: 4, y: 0, z: 4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1634846161}
@@ -331,7 +293,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 1, g: 1, b: 1, a: 0}
+  m_BackGroundColor: {r: 1, g: 1, b: 1, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -345,8 +307,8 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.01
-  far clip plane: 2.01
-  field of view: 60
+  far clip plane: 1.01
+  field of view: 45
   orthographic: 0
   orthographic size: 5
   m_Depth: 0
@@ -493,6 +455,44 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!117 &774916573
+Texture3D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_ForcedFallbackFormat: 4
+  m_DownscaleFallback: 0
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 3
+  m_ColorSpace: 0
+  m_Format: 48
+  m_Width: 5
+  m_Height: 1
+  m_Depth: 5
+  m_MipCount: 1
+  m_DataSize: 200
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 1
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_UsageMode: 0
+  m_IsReadable: 1
+  image data: 200
+  _typelessdata: e83bef3af132003cff3b93350030003c0f3b782b3630003c4d3524209636003cd72a86250139003ce83b693b4d33003c003c51379530003c963ba52c072f003c013706228a35003c2c2c6823e738003ce83bab3b7c33003c003ca0380f31003ce53bf72e8f2e003ca33855254e34003c7f2e3424bb38003ce83bc53b8433003c003cae39aa31003cff3b5b31db2e003cae39f8279d32003c2b31b5245b38003ce83bc03b8133003c003c693a5632003cf93bfc331a30003c693a8d282531003cc23334248f37003c
+  m_StreamData:
+    serializedVersion: 2
+    offset: 0
+    size: 0
+    path: 
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -647,7 +647,7 @@ MonoBehaviour:
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
-    - {r: 0.93529415, g: 0.81078434, b: 0.23946078, a: 1}
+    - {r: 0.98828125, g: 0.8666687, b: 0.21691895, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
   - index: 1
@@ -656,7 +656,7 @@ MonoBehaviour:
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
-    - {r: 0.93529415, g: 0.862255, b: 0.24852945, a: 1}
+    - {r: 0.98828125, g: 0.9262085, b: 0.22818756, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
   - index: 2
@@ -665,7 +665,7 @@ MonoBehaviour:
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
-    - {r: 0.93529415, g: 0.8992648, b: 0.254902, a: 1}
+    - {r: 0.98828125, g: 0.958313, b: 0.23382568, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
   - index: 3
@@ -674,7 +674,7 @@ MonoBehaviour:
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
-    - {r: 0.93529415, g: 0.91642165, b: 0.25686276, a: 1}
+    - {r: 0.98828125, g: 0.9713135, b: 0.23480225, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
   - index: 4
@@ -683,7 +683,7 @@ MonoBehaviour:
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
-    - {r: 0.93529415, g: 0.90784323, b: 0.2539216, a: 1}
+    - {r: 0.98828125, g: 0.9688721, b: 0.23455048, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
   - index: 5
@@ -692,7 +692,7 @@ MonoBehaviour:
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
-    - {r: 0.9987745, g: 0.38014707, b: 0.13112746, a: 1}
+    - {r: 0.9992676, g: 0.34829712, b: 0.12501144, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
   - index: 6
@@ -701,7 +701,7 @@ MonoBehaviour:
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
-    - {r: 1, g: 0.45980394, b: 0.14411765, a: 1}
+    - {r: 1, g: 0.45716095, b: 0.1431427, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
   - index: 7
@@ -710,7 +710,7 @@ MonoBehaviour:
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
-    - {r: 1, g: 0.5781863, b: 0.15931374, a: 1}
+    - {r: 1, g: 0.57792664, b: 0.15809631, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
   - index: 8
@@ -719,7 +719,7 @@ MonoBehaviour:
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
-    - {r: 1, g: 0.70343137, b: 0.17745101, a: 1}
+    - {r: 1, g: 0.7098236, b: 0.17697144, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
   - index: 9
@@ -728,7 +728,7 @@ MonoBehaviour:
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
-    - {r: 0.9997549, g: 0.7666667, b: 0.19240198, a: 1}
+    - {r: 1, g: 0.80145264, b: 0.19802856, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
   - index: 10
@@ -737,7 +737,7 @@ MonoBehaviour:
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
-    - {r: 0.8813725, g: 0.07181373, b: 0.13431373, a: 1}
+    - {r: 0.8824158, g: 0.058340073, b: 0.13161469, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
   - index: 11
@@ -746,7 +746,7 @@ MonoBehaviour:
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
-    - {r: 0.9387255, g: 0.07818628, b: 0.1142157, a: 1}
+    - {r: 0.9483032, g: 0.07255173, b: 0.109802246, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
   - index: 12
@@ -755,7 +755,7 @@ MonoBehaviour:
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
-    - {r: 0.98137254, g: 0.116176486, b: 0.10539217, a: 1}
+    - {r: 0.9869995, g: 0.1088295, b: 0.10244751, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
   - index: 13
@@ -764,7 +764,7 @@ MonoBehaviour:
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
-    - {r: 0.99828434, g: 0.17671572, b: 0.10882354, a: 1}
+    - {r: 0.9992676, g: 0.16740799, b: 0.10710907, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
   - index: 14
@@ -773,7 +773,7 @@ MonoBehaviour:
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
-    - {r: 0.9884804, g: 0.24362749, b: 0.12867649, a: 1}
+    - {r: 0.9963379, g: 0.24951935, b: 0.12818909, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
   - index: 15
@@ -782,7 +782,7 @@ MonoBehaviour:
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
-    - {r: 0.3637255, g: 0.010294118, b: 0.39632356, a: 1}
+    - {r: 0.33136368, g: 0.008088112, b: 0.41150665, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
   - index: 16
@@ -791,7 +791,7 @@ MonoBehaviour:
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
-    - {r: 0.44313723, g: 0.011764706, b: 0.34583336, a: 1}
+    - {r: 0.43774414, g: 0.011764526, b: 0.34630585, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
   - index: 17
@@ -800,7 +800,7 @@ MonoBehaviour:
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
-    - {r: 0.5796569, g: 0.021568628, b: 0.27328432, a: 1}
+    - {r: 0.57962036, g: 0.020834923, b: 0.26908875, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
   - index: 18
@@ -809,7 +809,7 @@ MonoBehaviour:
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
-    - {r: 0.70465684, g: 0.030882353, b: 0.2120098, a: 1}
+    - {r: 0.7098236, g: 0.031131744, b: 0.20662308, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
   - index: 19
@@ -818,7 +818,7 @@ MonoBehaviour:
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
-    - {r: 0.76642156, g: 0.03529412, b: 0.18186276, a: 1}
+    - {r: 0.80148315, g: 0.035539627, b: 0.16078949, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
   - index: 20
@@ -827,7 +827,7 @@ MonoBehaviour:
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
-    - {r: 0.12083333, g: 0.074264705, b: 0.5914215, a: 1}
+    - {r: 0.053432465, g: 0.021568298, b: 0.6254883, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
   - index: 21
@@ -836,7 +836,7 @@ MonoBehaviour:
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
-    - {r: 0.124509804, g: 0.06838236, b: 0.5860293, a: 1}
+    - {r: 0.06519699, g: 0.014461517, b: 0.6129761, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
   - index: 22
@@ -845,7 +845,7 @@ MonoBehaviour:
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
-    - {r: 0.16250002, g: 0.07009804, b: 0.56225497, a: 1}
+    - {r: 0.10147476, g: 0.016422272, b: 0.59143066, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
   - index: 23
@@ -854,7 +854,7 @@ MonoBehaviour:
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
-    - {r: 0.22352944, g: 0.07205883, b: 0.5147059, a: 1}
+    - {r: 0.16152191, g: 0.018383026, b: 0.5443878, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
   - index: 24
@@ -863,10 +863,10 @@ MonoBehaviour:
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
-    - {r: 0.29019612, g: 0.071078435, b: 0.45686278, a: 1}
+    - {r: 0.24240112, g: 0.016422272, b: 0.47233582, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
     - {r: 1, g: 1, b: 1, a: 1}
-  texture: {fileID: 338748947}
+  texture: {fileID: 774916573}
 --- !u!4 &1634846161
 Transform:
   m_ObjectHideFlags: 0
@@ -900,7 +900,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &1667492405
 BoxCollider:
   m_ObjectHideFlags: 0
