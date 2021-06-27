@@ -38,7 +38,8 @@ float3 GetIrradiance(float3 position, float3 normal) {
     colors[4] = tex3D(_VolumeTex4, coord);
     colors[5] = tex3D(_VolumeTex5, coord);
     
-    float3 color = GetAmbientColor(normal, colors);
+    float3 direction = reflect(-_MainLightPosition.xyz, normal);
+    float3 color = GetAmbientColor(direction, colors);
 
     return color;
 }
