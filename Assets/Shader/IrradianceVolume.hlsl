@@ -30,6 +30,7 @@ float3 GetIrradiance(float3 position, float3 normal) {
     float3 pos = position - _VolumePosition;
     float3 size = (_VolumeSize * 2 + 1) * _VolumeInterval;
     float3 coord = pos / size;
+    float3 direction = reflect(-_MainLightPosition.xyz, normal);
 
     float3 colors[4];
     colors[0] = tex3D(_VolumeTex0, coord).rgb;
@@ -39,9 +40,9 @@ float3 GetIrradiance(float3 position, float3 normal) {
 
     float3 color = float3(0, 0, 0);
     color += K_SH_L0_Basis * colors[0];
-    color += K_SH_L1_Basis * colors[1] * normal.y;
-    color += K_SH_L1_Basis * colors[2] * normal.z;
-    color += K_SH_L1_Basis * colors[3] * normal.x;
+    color += K_SH_L1_Basis * colors[1] * direction.y;
+    color += K_SH_L1_Basis * colors[2] * direction.z;
+    color += K_SH_L1_Basis * colors[3] * direction.x;
     
     return color;
 }
