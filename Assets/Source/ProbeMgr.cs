@@ -58,7 +58,7 @@ public class ProbeMgr : MonoBehaviour {
 
         var camera = this.transform.Find("Camera").GetComponent<Camera>();
         camera.gameObject.SetActive(true);
-        camera.nearClipPlane = 0.01f;
+        camera.nearClipPlane = 0.001f;
         camera.farClipPlane = 100;
         camera.fieldOfView = 179;
         camera.backgroundColor = Color.white;
@@ -160,7 +160,7 @@ public class ProbeMgr : MonoBehaviour {
         }
         
         for (int i = 0; i < this.textures.Length; i++) {
-            Shader.SetGlobalTexture("_IndexVolumeTex" + i, this.textures[i]);
+            Shader.SetGlobalTexture("_VolumeTex" + i, this.textures[i]);
         }
         
         Shader.SetGlobalVector("_VolumeSize", (Vector3)this.size);
