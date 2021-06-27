@@ -1,31 +1,22 @@
 using System;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.Experimental.Rendering;
 
 [Serializable]
 public class ProbeData {
     public int index;
     public Vector3Int position;
-    public Color[] colors;
+    public Vector3[] cofficients;
 }
 
 [ExecuteAlways]
 public class ProbeMgr : MonoBehaviour {
-    private const int SIZE = 4;
-
-    private static Vector3[] Directions = new Vector3[] {
-        new Vector3(-1, 0, 0),
-        new Vector3(1, 0, 0),
-        new Vector3(0, -1, 0),
-        new Vector3(0, 1, 0),
-        new Vector3(0, 0, -1),
-        new Vector3(0, 0, 1),
-    };
-
     public Vector3Int size;
     public float interval;
     public ProbeData[] datas;
     public Texture3D[] textures;
+    public ComputeShader shader;
 
     private Vector3 position;
 
@@ -45,11 +36,6 @@ public class ProbeMgr : MonoBehaviour {
             Gizmos.color = Color.black;
             var size = new Vector3(this.interval, this.interval, this.interval);
             Gizmos.DrawWireCube(position, size);
-            
-            for (int i = 0; i < data.colors.Length; i++) {
-                Gizmos.color = data.colors[i];
-                Gizmos.DrawSphere(position + Directions[i] * this.interval * 0.3f, this.interval * 0.1f);
-            }
         }
     }
 
@@ -58,7 +44,7 @@ public class ProbeMgr : MonoBehaviour {
 
         var camera = this.transform.Find("Camera").GetComponent<Camera>();
         camera.gameObject.SetActive(true);
-        camera.nearClipPlane = 0.01f;
+        camera.nearClipPlane = 0.001f;
         camera.farClipPlane = 100;
         camera.fieldOfView = 179;
         camera.backgroundColor = Color.white;
@@ -70,15 +56,16 @@ public class ProbeMgr : MonoBehaviour {
 
         camera.gameObject.SetActive(false);
 
-        this.textures = new Texture3D[6];
+        this.textures = new Texture3D[4];
 
         for (int i = 0; i < this.textures.Length; i++) {
-            var texture = new Texture3D(this.size.x * 2 + 1, this.size.y * 2 + 1, this.size.z * 2 + 1, DefaultFormat.HDR, 0);
+            var texture = new Texture3D(this.size.x * 2 + 1, this.size.y * 2 + 1, this.size.z * 2 + 1, TextureFormat.RGBAFloat, false);
             texture.wrapMode = TextureWrapMode.Clamp;
 
             foreach (var data in this.datas) {
                 var pos = data.position;
-                var color = data.colors[i];
+                var cf = data.cofficients[i];
+                var color = new Color(cf.x, cf.y, cf.z);
                 texture.SetPixel(pos.x, pos.y, pos.z, color);
             }
             
@@ -117,8 +104,7 @@ public class ProbeMgr : MonoBehaviour {
                     n++;
                     this.datas[n] = new ProbeData() {
                         index = n,
-                        position = new Vector3Int(i, j, k),
-                        colors = new Color[6]
+                        position = new Vector3Int(i, j, k)
                     };
                 }
             }
@@ -128,30 +114,36 @@ public class ProbeMgr : MonoBehaviour {
     }
 
     private void CaptureProbe(ProbeData data, Camera camera) {
+        var texture = new RenderTexture(128, 128, 32, RenderTextureFormat.ARGBFloat);
+        texture.dimension = TextureDimension.Cube;
+
         var position = this.GetProbePosition(data);
+
         camera.transform.position = position;
+        camera.RenderToCubemap(texture);
 
-        var cubemap = new Cubemap(SIZE, DefaultFormat.HDR, TextureCreationFlags.None);
-        camera.RenderToCubemap(cubemap);
-        cubemap.Apply();
+        int kernel = this.shader.FindKernel("CSMain");
+        this.shader.SetTexture(kernel, "_CubeMap", texture);
 
-        for (int i = 0; i < data.colors.Length; i++) {
-            data.colors[i] = this.MixColor(cubemap, (CubemapFace)i);
-        }
-    }
+        var buffer = new ComputeBuffer(9216, sizeof(float) * 3);
+        this.shader.SetBuffer(kernel, "_Cofficients", buffer);
+        this.shader.Dispatch(kernel, 32, 32, 1);
 
-    private Color MixColor(Cubemap cubemap, CubemapFace face) {
-        var color = new Color();
-        int max = cubemap.width * cubemap.height;
+        var cofficients = new Vector3[4096];
+        buffer.GetData(cofficients);
 
-        for (int i = 0; i < cubemap.width; i++) {
-            for (int j = 0; j < cubemap.height; j++) {
-                var c = cubemap.GetPixel(face, i, j);
-                color += c;
+        buffer.Release();
+        texture.Release();
+
+        data.cofficients = new Vector3[4];
+
+        for (int i = 0; i < data.cofficients.Length; i++) {
+            for (int j = 0; j < 1024; j++) {
+                data.cofficients[i] += cofficients[4 * j + i];
             }
-        }
 
-        return color / max;
+            data.cofficients[i] *= 1 / 1024.0f * 4 * Mathf.PI;
+        }
     }
 
     private void SetValue() {
@@ -160,7 +152,7 @@ public class ProbeMgr : MonoBehaviour {
         }
         
         for (int i = 0; i < this.textures.Length; i++) {
-            Shader.SetGlobalTexture("_IndexVolumeTex" + i, this.textures[i]);
+            Shader.SetGlobalTexture("_VolumeTex" + i, this.textures[i]);
         }
         
         Shader.SetGlobalVector("_VolumeSize", (Vector3)this.size);

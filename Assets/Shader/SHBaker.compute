@@ -1,0 +1,54 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+//RWTexture2D<float4> Result;
+RWStructuredBuffer<float3> _Cofficients;
+TextureCube<float4> _CubeMap;
+SamplerState _LinearClamp;
+
+
+
+
+float3 RandomDirection(int n,int N)
+{
+    const float pii = 3.1415926;
+    float y = (2.0*n-1.0)/(float)N - 1;
+    float x = sqrt(1-y*y)*cos(2* pii *n*0.617);
+    float z = sqrt(1 - y * y) * sin(2 * pii * n * 0.617);
+    return normalize(float3(x, y, z));
+}
+
+[numthreads(32,32,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    
+    float3 sampledirection = RandomDirection(id.x*32 + id.y + 1,1024);
+
+    
+    float3 color = _CubeMap.SampleLevel(_LinearClamp, sampledirection, 0).xyz;
+
+    // SH basis coef:
+    const float k_SH_L0_Basis = 0.28209479177387814347403972578039f;            //Mathf.Sqrt(1.0f / (4.0f * Mathf.PI));            
+    const float k_SH_L1_Basis = 0.48860251190291992158638462283835f;            //Mathf.Sqrt(3.0f / (4.0f * Mathf.PI));
+    const float k_SH_L2_mn2n1p1_Basis = 1.0925484305920790705433857058027f;     //Mathf.Sqrt(15.0f / (4.0f * Mathf.PI));
+    const float k_SH_L2_0_Basis_mul3 = 0.94617469575756001809268107088713f;     //Mathf.Sqrt(5.0f / (16.0f * Mathf.PI)) * 3.0f;
+    const float k_SH_L2_n2_Basis = 0.54627421529603953527169285290135f;         //Mathf.Sqrt(15.0f / (16.0f * Mathf.PI));
+    const float k_OneThrid = 1.0f / 3.0f;               //1.0f / 3.0f;
+
+    _Cofficients[(32 * id.x + id.y)*4] = k_SH_L0_Basis * color;
+    
+    _Cofficients[(32 * id.x + id.y) * 4 + 1] = k_SH_L1_Basis * sampledirection.y * color;
+    _Cofficients[(32 * id.x + id.y) * 4 + 2] = k_SH_L1_Basis * sampledirection.z * color;
+    _Cofficients[(32 * id.x + id.y) * 4 + 3] = k_SH_L1_Basis * sampledirection.x * color;
+
+    //_Cofficients[(32 * id.x + id.y) * 9 + 4] = k_SH_L2_mn2n1p1_Basis * sampledirection.x * sampledirection.y * color;
+    //_Cofficients[(32 * id.x + id.y) * 9 + 5] = k_SH_L2_mn2n1p1_Basis * sampledirection.z * sampledirection.y * color;
+    //_Cofficients[(32 * id.x + id.y) * 9 + 6] = k_SH_L2_0_Basis_mul3 * 0.3333333333 * (2 * sampledirection.z* sampledirection.z - sampledirection.x * sampledirection.x - sampledirection.y * sampledirection.y) * color;
+    //_Cofficients[(32 * id.x + id.y) * 9 + 7] = k_SH_L2_n2_Basis* 2 * sampledirection.x * sampledirection.z * color;
+    //_Cofficients[(32 * id.x + id.y) * 9 + 8] = k_SH_L2_n2_Basis * (sampledirection.x * sampledirection.x - sampledirection.y * sampledirection.y) * color;
+
+
+    
+}
