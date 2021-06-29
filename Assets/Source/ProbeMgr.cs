@@ -1,5 +1,8 @@
 using System;
+using System.Threading.Tasks;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.Experimental.Rendering;
 
 [Serializable]
@@ -11,7 +14,7 @@ public class ProbeData {
 
 [ExecuteAlways]
 public class ProbeMgr : MonoBehaviour {
-    private const int SIZE = 4;
+    private const int SIZE = 128;
 
     private static Vector3[] Directions = new Vector3[] {
         new Vector3(-1, 0, 0),
@@ -22,17 +25,32 @@ public class ProbeMgr : MonoBehaviour {
         new Vector3(0, 0, 1),
     };
 
+    public ComputeShader shader;
     public Vector3Int size;
     public float interval;
     public ProbeData[] datas;
     public Texture3D[] textures;
 
     private Vector3 position;
+    private int progress;
+
+    public bool IsBaking {
+        get;
+        private set;
+    }
 
     protected void Start() {
         this.AdjustPosition();
         this.SetValue();
     }
+
+#if UNITY_EDITOR
+    protected void Update() {
+        if (this.IsBaking) {
+            EditorUtility.SetDirty(this);
+        }
+    }
+#endif
 
     protected void OnDrawGizmosSelected() {
         if (this.datas == null) {
@@ -53,40 +71,40 @@ public class ProbeMgr : MonoBehaviour {
         }
     }
 
-    public void Bake() {
+    public async void Bake() {
+        print("Baking...");
+
+        this.IsBaking = true;
+        Shader.EnableKeyword("_BAKING");
+        this.progress = 0;
+
         this.FlushProbe();
-
-        var camera = this.transform.Find("Camera").GetComponent<Camera>();
-        camera.gameObject.SetActive(true);
-        camera.nearClipPlane = 0.001f;
-        camera.farClipPlane = 100;
-        camera.fieldOfView = 179;
-        camera.backgroundColor = Color.white;
-        camera.clearFlags = CameraClearFlags.SolidColor;
-
-        for (int i = 0; i < this.datas.Length; i++) {
-            this.CaptureProbe(this.datas[i], camera);
-        }
-
-        camera.gameObject.SetActive(false);
-
         this.textures = new Texture3D[6];
 
         for (int i = 0; i < this.textures.Length; i++) {
             var texture = new Texture3D(this.size.x * 2 + 1, this.size.y * 2 + 1, this.size.z * 2 + 1, DefaultFormat.HDR, 0);
             texture.wrapMode = TextureWrapMode.Clamp;
-
-            foreach (var data in this.datas) {
-                var pos = data.position;
-                var color = data.colors[i];
-                texture.SetPixel(pos.x, pos.y, pos.z, color);
-            }
-            
-            texture.Apply();
             this.textures[i] = texture;
+        }
+        
+        for (int i = 0; i < this.datas.Length; i++) {
+            this.CaptureProbe(this.datas[i]);
+        }
+        
+        while (this.progress < this.datas.Length) {
+            EditorUtility.SetDirty(this);
+            await Task.Yield();
+        }
+
+        foreach (var texture in this.textures) {
+            texture.Apply();
         }
 
         this.SetValue();
+        Shader.DisableKeyword("_BAKING");
+        this.IsBaking = false;
+
+        print("Bake Finish");
     }
 
     private Vector3 GetProbePosition(ProbeData data) {
@@ -127,17 +145,53 @@ public class ProbeMgr : MonoBehaviour {
         this.AdjustPosition();
     }
 
-    private void CaptureProbe(ProbeData data, Camera camera) {
-        var position = this.GetProbePosition(data);
-        camera.transform.position = position;
+    private async void CaptureProbe(ProbeData data) {
+        var go = new GameObject("Reflect");
+        var reflect = go.AddComponent<ReflectionProbe>();
+        
+        reflect.nearClipPlane = 0.001f;
+        reflect.farClipPlane = 100;
+        reflect.hdr = true;
+        reflect.backgroundColor = Color.white;
+        reflect.clearFlags = ReflectionProbeClearFlags.SolidColor;
+        reflect.resolution = 128;
 
-        var cubemap = new Cubemap(SIZE, DefaultFormat.HDR, TextureCreationFlags.None);
-        camera.RenderToCubemap(cubemap);
-        cubemap.Apply();
+        var position = this.GetProbePosition(data);
+        go.transform.SetParent(this.transform);
+        go.transform.position = position;
+
+        var rt = RenderTexture.GetTemporary(SIZE, SIZE, 32, RenderTextureFormat.ARGBFloat);
+        rt.dimension = TextureDimension.Cube;
+
+        var id = reflect.RenderProbe(rt);
+
+        while (!reflect.IsFinishedRendering(id)) {
+            EditorUtility.SetDirty(this);
+            await Task.Yield();
+        }
+
+        var colorBuffer = new ComputeBuffer(6, sizeof(float) * 4);
+        int kernel = this.shader.FindKernel("CSMain");
+
+        this.shader.SetTexture(kernel, "_CubeMap", rt);
+        this.shader.SetBuffer(kernel, "_Colors", colorBuffer);
+        this.shader.SetFloat("_Size", SIZE);
+        this.shader.Dispatch(kernel, 6, 1, 1);
+
+        colorBuffer.GetData(data.colors);
+
+        var pos = data.position;
 
         for (int i = 0; i < data.colors.Length; i++) {
-            data.colors[i] = this.MixColor(cubemap, (CubemapFace)i);
+            var color = data.colors[i];
+            this.textures[i].SetPixel(pos.x, pos.y, pos.z, color);
         }
+
+        colorBuffer.Release();
+        RenderTexture.ReleaseTemporary(rt);
+        DestroyImmediate(go);
+
+        this.progress++;
     }
 
     private Color MixColor(Cubemap cubemap, CubemapFace face) {

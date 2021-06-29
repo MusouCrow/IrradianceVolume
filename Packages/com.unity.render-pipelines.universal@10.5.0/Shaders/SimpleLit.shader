@@ -100,6 +100,8 @@ Shader "Universal Render Pipeline/Simple Lit"
             #pragma multi_compile_instancing
             #pragma multi_compile _ DOTS_INSTANCING_ON
 
+            #pragma multi_compile _ _BAKING
+
             #pragma vertex LitPassVertexSimple
             #pragma fragment LitPassFragmentSimple
             #define BUMP_SCALE_NOT_SUPPORTED 1

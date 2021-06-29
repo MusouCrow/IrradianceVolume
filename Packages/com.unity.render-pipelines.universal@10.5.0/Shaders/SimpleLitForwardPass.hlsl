@@ -145,14 +145,17 @@ half4 LitPassFragmentSimple(Varyings input) : SV_Target
 
     half4 color = UniversalFragmentBlinnPhong(inputData, diffuse, specular, smoothness, emission, alpha);
 
-#ifdef _VOLUME_GI_ON
-    half3 ambientColor = GetIrradiance(inputData.positionWS, inputData.normalWS);
-#else
-    half3 ambientColor = 1.0;
-#endif
+    #ifndef _BAKING
+        #ifdef _VOLUME_GI_ON
+            half3 ambientColor = GetIrradiance(inputData.positionWS, inputData.normalWS);
+        #else
+            half3 ambientColor = 1.0;
+        #endif
+        
+        color.rgb *= ambientColor;
+        color.rgb = MixFog(color.rgb, inputData.fogCoord);
+    #endif
     
-    color.rgb *= ambientColor;
-    color.rgb = MixFog(color.rgb, inputData.fogCoord);
     color.a = OutputAlpha(color.a, _Surface);
 
     return color;

@@ -1,0 +1,47 @@
+#pragma kernel CSMain
+
+TextureCube<float4> _CubeMap;
+SamplerState _LinearClamp;
+
+RWStructuredBuffer<float4> _Colors;
+float _Size;
+
+[numthreads(6, 1, 1)]
+void CSMain (uint3 id : SV_GroupID)
+{
+    float rate = 1.0 / _Size;
+    float3 color = float3(0.0, 0.0, 0.0);
+
+    for (int i = 0; i < _Size; i++) {
+        for (int j = 0; j < _Size; j++) {
+            float2 uv = float2(j, i) * rate;
+            uv = 2.0 * uv - 1.0; // 0~1 -> -1~1
+
+            float3 coord = float3(0.0, 0.0, 0.0);
+
+            if (id.x == 0) { // +X
+                coord = float3(1.0, uv);
+            }
+            else if (id.x == 1) { // -X
+                coord = float3(-1.0, uv);
+            }
+            else if (id.x == 2) { // +Y
+                coord = float3(uv.x, 1.0, uv.y);
+            }
+            else if (id.x == 3) { // -Y
+                coord = float3(uv.x, -1.0, uv.y);
+            }
+            else if (id.x == 4) { // +Z
+                coord = float3(uv, 1.0);
+            }
+            else if (id.x == 5) { // -Z
+                coord = float3(uv, -1.0);
+            }
+
+            color += _CubeMap.SampleLevel(_LinearClamp, coord, 0).rgb;
+        }
+    }
+
+    float maxn = _Size * _Size;
+    _Colors[id.x] = float4(color / maxn, 1.0);
+}
