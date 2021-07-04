@@ -57,16 +57,25 @@ public class ProbeMgr : MonoBehaviour {
             return;
         }
 
+        Gizmos.color = Color.black;
+        var size = new Vector3(this.interval, this.interval, this.interval);
+        var position = this.transform.position;
+
+        for (int x = -this.size.x; x <= this.size.x; x++) {
+            for (int y = -this.size.y; y <= this.size.y; y++) {
+                for (int z = -this.size.z; z <= this.size.z; z++) {
+                    var pos = new Vector3(x, y, z) * this.interval;
+                    Gizmos.DrawWireCube(position + pos, size);
+                }
+            }
+        }
+
         foreach (var data in this.datas) {
-            var position = this.GetProbePosition(data);
-            
-            Gizmos.color = Color.black;
-            var size = new Vector3(this.interval, this.interval, this.interval);
-            Gizmos.DrawWireCube(position, size);
+            var pos = this.GetProbePosition(data);
             
             for (int i = 0; i < data.colors.Length; i++) {
                 Gizmos.color = data.colors[i];
-                Gizmos.DrawSphere(position + Directions[i] * this.interval * 0.3f, this.interval * 0.1f);
+                Gizmos.DrawSphere(pos + Directions[i] * this.interval * 0.3f, this.interval * 0.1f);
             }
         }
     }
